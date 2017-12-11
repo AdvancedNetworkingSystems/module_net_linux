@@ -33,6 +33,25 @@ class NetworkModule(wishful_module.AgentModule):
         super(NetworkModule, self).__init__()
         self.log = logging.getLogger('NetworkModule')
 
+    def run_command(self, command):
+        '''
+            Method to start the shell commands and get the output as iterater object
+        '''
+        sp = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+        out, err = sp.communicate()
+
+        if True:
+            if out:
+                self.log.debug("standard output of subprocess:")
+                self.log.debug(out)
+            if err:
+                self.log.debug("standard error of subprocess:")
+                self.log.debug(err)
+
+        #if err:
+        #    raise Exception("An error occurred in Dot80211Linux: %s" % err)
+
+        return [sp.returncode, out.decode("utf-8"), err.decode("utf-8")]
 
     @wishful_module.bind_function(upis.net.get_iface_hw_addr)
     def get_iface_hw_addr(self, iface):
