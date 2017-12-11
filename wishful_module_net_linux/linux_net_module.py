@@ -356,3 +356,26 @@ class NetworkModule(wishful_module.AgentModule):
         chain = iptc.Chain(iptc.Table(table), chain)
         chain.delete_rule(rule)
         return "OK"
+
+    @wishful_module.bind_function(upis.net.flush_iptables)
+    def flush_iptables(self):
+        try:
+            [rcode, sout, serr] = self.run_command('sudo iptables -F')
+            return sout
+        except Exception as e:
+            fname = inspect.currentframe().f_code.co_name
+            self.log.fatal("An error occurred in %s: %s" % (fname, e))
+            raise exceptions.UPIFunctionExecutionFailedException(func_name=fname, err_msg=str(e))
+
+
+    @wishful_module.bind_function(upis.net.filter_mac)
+    def filter_mac(self, neighbor_mac_address):
+        filter_cmd = "sudo iptables -I INPUT -i {} -m mac --mac-source {} " \
+                     "-j DROP".format(self.interface, neighbor_mac_address)
+        try:
+            [rcode, sout, serr] = self.run_command('sudo iptables -F')
+            return sout
+        except Exception as e:
+            fname = inspect.currentframe().f_code.co_name
+            self.log.fatal("An error occurred in %s: %s" % (fname, e))
+            raise exceptions.UPIFunctionExecutionFailedException(func_name=fname, err_msg=str(e))
