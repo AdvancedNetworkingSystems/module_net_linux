@@ -392,7 +392,7 @@ class NetworkModule(wishful_module.AgentModule):
         filter_cmd = "sudo iptables -I INPUT -i {} -m mac --mac-source {} " \
                      "-j DROP".format(self.interface, neighbor_mac_address)
         try:
-            [rcode, sout, serr] = self.run_command('sudo iptables -F')
+            [rcode, sout, serr] = self.run_command(filter_cmd)
             return sout
         except Exception as e:
             fname = inspect.currentframe().f_code.co_name
