@@ -399,6 +399,3 @@ class NetworkModule(wishful_module.AgentModule):
             self.log.fatal("An error occurred in %s: %s" % (fname, e))
             raise exceptions.UPIFunctionExecutionFailedException(func_name=fname, err_msg=str(e))
 
-    @wishful_module.bind_function(upis.net.get_hostname)
-    def get_hostname(self):
-        return socket.gethostname()
