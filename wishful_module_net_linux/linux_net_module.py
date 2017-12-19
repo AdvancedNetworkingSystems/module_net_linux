@@ -399,3 +399,10 @@ class NetworkModule(wishful_module.AgentModule):
             self.log.fatal("An error occurred in %s: %s" % (fname, e))
             raise exceptions.UPIFunctionExecutionFailedException(func_name=fname, err_msg=str(e))
 
+    @wishful_module.bind_function(upis.net.run_terminal_command)
+    def run_terminal_command(self, cmd, cwd=None):
+        sp = subprocess.Popen(cmd, stdout=subprocess.PIPE,
+                              stderr=subprocess.PIPE, shell=True, cwd=cwd)
+        out, err = sp.communicate()
+
+        return [sp.returncode, out.decode('utf-8'), err.decode('utf-8')]
